@@ -42,7 +42,7 @@ hi def link coffeeKeyword Keyword
 
 " syn match coffeeFunction  /\s\?[-=]>/
 syn match coffeeFunction /@\?\I.*\w\+\ze\s*=\s*.*[-=]>/ contains=@coffeeIdentifier display
-hi def link coffeefunction Identifier
+hi def link coffeefunction Function
 
 syn keyword coffeeOperator  instanceof typeof delete length
 \                       display
