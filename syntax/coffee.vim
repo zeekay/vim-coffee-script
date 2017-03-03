@@ -32,18 +32,24 @@ hi def link coffeeConditional Conditional
 syn match coffeeException /\<\%(try\|catch\|finally\)\>/ display
 hi def link coffeeException Exception
 
-syn match coffeeKeyword /\<\%(new\|in\|of\|by\|and\|or\|not\|is\|isnt\|class\|extends\|super\|do\|yield\|debugger\|import\|export\|await\)\>/
+syn match coffeeKeyword /\<\%(new\|in\|of\|by\|and\|or\|not\|is\|isnt\|class\|extends\|super\|do\|yield\|debugger\|import\|export\|default\|await\)\>/
 \                       display
 " The `own` keyword is only a keyword after `for`.
 syn match coffeeKeyword /\<for\s\+own\>/ contained containedin=coffeeRepeat
 \                       display
 hi def link coffeeKeyword Keyword
 
-syn match coffeeOperator /\<\%(instanceof\|typeof\|delete\)\>/ display
+
+" syn match coffeeFunction  /\s\?[-=]>/
+syn match coffeeFunction /@\?\I.*\w\+\ze\s*=\s*.*[-=]>/ contains=@coffeeIdentifier display
+hi def link coffeefunction Identifier
+
+syn keyword coffeeOperator  instanceof typeof delete length
+\                       display
 hi def link coffeeOperator Operator
 
 " The first case matches symbol operators only if they have an operand before.
-syn match coffeeExtendedOp /\%(\S\s*\)\@<=[+\-*/%&|\^=!<>?.]\{-1,}\|[-=]>\|--\|++\|:/
+syn match coffeeExtendedOp /\%(\S\s*\)\@<=[+\-*/%&|\^=!<>?.,;]\{-1,}\|--\|++\|:/
 \                          display
 syn match coffeeExtendedOp /\<\%(and\|or\)=/ display
 hi def link coffeeExtendedOp coffeeOperator
@@ -107,7 +113,7 @@ hi def link coffeeFloat Float
 
 " An error for reserved keywords, taken from the RESERVED array:
 " http://coffeescript.org/documentation/docs/lexer.html#section-67
-syn match coffeeReservedError /\<\%(case\|default\|function\|var\|void\|with\|const\|let\|enum\|native\|implements\|interface\|package\|private\|protected\|public\|static\)\>/
+syn match coffeeReservedError /\<\%(case\|function\|var\|void\|with\|const\|let\|enum\|native\|implements\|interface\|package\|private\|protected\|public\|static\)\>/
 \                             display
 hi def link coffeeReservedError Error
 
@@ -188,18 +194,22 @@ syn match coffeeProtoAccess /::\s*\%(\I\|\$\)\%(\i\|\$\)*/he=s+2 contains=@coffe
 hi def link coffeeProtoAccess coffeeExtendedOp
 
 " This is required for interpolations to work.
-syn region coffeeCurlies matchgroup=coffeeCurly start=/{/ end=/}/
+syn region coffeeCurlies matchgroup=coffeeBraces start=/{/ end=/}/
 \                        contains=@coffeeAll
 syn region coffeeBrackets matchgroup=coffeeBracket start=/\[/ end=/\]/
 \                         contains=@coffeeAll
-syn region coffeeParens matchgroup=coffeeParen start=/(/ end=/)/
+syn region coffeeParens matchgroup=coffeeBlockParen start=/(/ end=/)/
 \                       contains=@coffeeAll
 
 " These are highlighted the same as commas since they tend to go together.
-hi def link coffeeBlock coffeeSpecialOp
-hi def link coffeeBracket coffeeBlock
-hi def link coffeeCurly coffeeBlock
-hi def link coffeeParen coffeeBlock
+hi! def link coffeeParens Special
+hi! def link coffeeBlockParen Operator
+
+hi! def link coffeeCurlies Special
+hi! def link coffeeBraces Function
+
+hi! def link coffeeBrackets NONE
+hi! def link coffeeBracket Function
 
 " This is used instead of TOP to keep things coffee-specific for good
 " embedding. `contained` groups aren't included.
@@ -214,7 +224,7 @@ syn cluster coffeeAll contains=coffeeStatement,coffeeRepeat,coffeeConditional,
 \                              coffeeHeredoc,coffeeSpaceError,
 \                              coffeeSemicolonError,coffeeDotAccess,
 \                              coffeeProtoAccess,coffeeCurlies,coffeeBrackets,
-\                              coffeeParens
+\                              coffeeParens,coffeeFunction
 
 if !exists('b:current_syntax')
   let b:current_syntax = 'coffee'
